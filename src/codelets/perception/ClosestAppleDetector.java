@@ -33,30 +33,35 @@ import ws3dproxy.model.Thing;
  * @author klaus
  *
  */
-public class ClosestAppleDetector extends Codelet {
-
+public class ClosestAppleDetector extends Codelet 
+{
 	private MemoryObject knownMO;
 	private MemoryObject closestAppleMO;
 	private MemoryObject innerSenseMO;
 	
         private List<Thing> known;
 
-	public ClosestAppleDetector() {
+	public ClosestAppleDetector() 
+        {
 	}
 
 
 	@Override
-	public void accessMemoryObjects() {
+	public void accessMemoryObjects() 
+        {
 		this.knownMO=(MemoryObject)this.getInput("KNOWN_APPLES");
 		this.innerSenseMO=(MemoryObject)this.getInput("INNER");
 		this.closestAppleMO=(MemoryObject)this.getOutput("CLOSEST_APPLE");	
 	}
+        
 	@Override
-	public void proc() {
+	public void proc() 
+        {
                 Thing closest_apple=null;
                 known = Collections.synchronizedList((List<Thing>) knownMO.getI());
                 CreatureInnerSense cis = (CreatureInnerSense) innerSenseMO.getI();
-                synchronized(known) {
+                synchronized(known) 
+                {
 		   if(known.size() != 0){
 			//Iterate over objects in vision, looking for the closest apple
                         CopyOnWriteArrayList<Thing> myknown = new CopyOnWriteArrayList<>(known);

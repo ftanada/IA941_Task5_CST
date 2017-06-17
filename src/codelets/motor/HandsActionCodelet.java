@@ -36,9 +36,8 @@ import ws3dproxy.model.Creature;
  *
  */
 
-
-public class HandsActionCodelet extends Codelet{
-
+public class HandsActionCodelet extends Codelet
+{
 	private MemoryObject handsMO;
 	private String previousHandsAction="";
         private Creature c;
@@ -50,48 +49,59 @@ public class HandsActionCodelet extends Codelet{
 	}
 	
         @Override
-	public void accessMemoryObjects() {
-		handsMO=(MemoryObject)this.getInput("HANDS");
+	public void accessMemoryObjects() 
+        {
+	  handsMO=(MemoryObject)this.getInput("HANDS");
 	}
-	public void proc() {
-            
-                String command = (String) handsMO.getI();
+	public void proc() 
+        {    
+           String command = (String) handsMO.getI();
 
-		if(!command.equals("") && (!command.equals(previousHandsAction))){
-			JSONObject jsonAction;
-			try {
-				jsonAction = new JSONObject(command);
-				if(jsonAction.has("ACTION") && jsonAction.has("OBJECT")){
-					String action=jsonAction.getString("ACTION");
-					String objectName=jsonAction.getString("OBJECT");
-					if(action.equals("PICKUP")){
-                                                try {
-                                                 c.putInSack(objectName);
-                                                } catch (Exception e) {
-                                                    
-                                                } 
-						log.info("Sending Put In Sack command to agent:****** "+objectName+"**********");							
-						
-						
+	   if (!command.equals("") && (!command.equals(previousHandsAction)))
+           {
+		JSONObject jsonAction;
+		try 
+                {
+		  jsonAction = new JSONObject(command);
+		  if (jsonAction.has("ACTION") && jsonAction.has("OBJECT"))
+                  {
+			String action = jsonAction.getString("ACTION");
+			String objectName = jsonAction.getString("OBJECT");
+			if (action.equals("PICKUP") || action.equals("SACKIT"))
+                        {
+                            try 
+                            {
+                                c.putInSack(objectName);
+                                System.out.println("HandsAction.proc sackit "+objectName);
+                            } catch (Exception e) 
+                            {
+                               System.out.println("HandsAction.proc sackit: "+e.getMessage());                
+                            } 
+			    log.info("Sending Put In Sack command to agent:****** "+objectName+"**********");																			
 						//							}
-					}
-					if(action.equals("EATIT")){
-                                                try {
-                                                 c.eatIt(objectName);
-                                                } catch (Exception e) {
+		        }
+			if (action.equals("EATIT"))
+                        {
+                            try 
+                            {
+                                c.eatIt(objectName);
+                            } catch (Exception e) 
+                            {
                                                     
-                                                }
-						log.info("Sending Eat command to agent:****** "+objectName+"**********");							
-					}
-					if(action.equals("BURY")){
-                                                try {
-                                                 c.hideIt(objectName);
-                                                } catch (Exception e) {
-                                                    
-                                                }
-						log.info("Sending Bury command to agent:****** "+objectName+"**********");							
-					}
-				}
+                            }
+ 		            log.info("Sending Eat command to agent:****** "+objectName+"**********");							 
+			}
+			if (action.equals("BURY") || action.equals("HIDEIT"))
+                        {
+                            try 
+                            {
+                                c.hideIt(objectName);
+                            } catch (Exception e) 
+                            {                                                    
+                            }
+			    log.info("Sending Bury command to agent:****** "+objectName+"**********");							
+			}
+		}
 //                                else if (jsonAction.has("ACTION")) {
 //                                    int x=0,y=0;
 //                                    String action=jsonAction.getString("ACTION");

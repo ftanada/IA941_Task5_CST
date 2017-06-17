@@ -47,11 +47,13 @@ public class JewelDetector extends Codelet
 	}
 
 	@Override
-	public void accessMemoryObjects() {
-                synchronized(this) {
-		    this.visionMO=(MemoryObject)this.getInput("VISION");
-                }
-		this.knownJewelsMO=(MemoryObject)this.getOutput("KNOWN_JEWELS");
+	public void accessMemoryObjects() 
+        {
+            synchronized(this) 
+            {
+	       this.visionMO = (MemoryObject)this.getInput("VISION");
+            }
+	    this.knownJewelsMO = (MemoryObject)this.getOutput("KNOWN_JEWELS");
 	}
 
 	@Override
@@ -64,7 +66,8 @@ public class JewelDetector extends Codelet
                //vision = Collections.synchronizedList((List<Thing>) visionMO.getI());
                vision = new CopyOnWriteArrayList((List<Thing>) visionMO.getI());    
                known = Collections.synchronizedList((List<Thing>) knownJewelsMO.getI());
-               synchronized(vision) {
+               synchronized(vision) 
+               {
                  for (Thing t : vision) 
                  {
                     boolean found = false;
@@ -77,7 +80,12 @@ public class JewelDetector extends Codelet
                             found = true;
                             break;
                           }
-                       if (found == false && t.getName().contains("PFood") && !t.getName().contains("NPFood")) known.add(t);
+                       //System.out.println("jewelDetector.proc: "+t.getName());
+                       if (found == false && t.getName().contains("Jewel"))
+                       {
+                         //System.out.println("jewelDetector.proc: adding "+t.getName());
+                         known.add(t);
+                       }
                     }
                
                  }

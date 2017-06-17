@@ -47,23 +47,23 @@ public class GetClosestJewel extends Codelet
 
 	public GetClosestJewel(int reachDistance) 
         {
-                setTimeStep(50);
-		this.reachDistance = reachDistance;
+           setTimeStep(50);
+           this.reachDistance = reachDistance;
 	}
 
 	@Override
 	public void accessMemoryObjects() 
         {
-		closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
-		innerSenseMO = (MemoryObject)this.getInput("INNER");
-		handsMO = (MemoryObject)this.getOutput("HANDS");
-                knownMO = (MemoryObject)this.getOutput("KNOWN_JEWELS");
+	  closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
+	  innerSenseMO = (MemoryObject)this.getInput("INNER");
+	  handsMO = (MemoryObject)this.getOutput("HANDS");
+          knownMO = (MemoryObject)this.getOutput("KNOWN_JEWELS");
 	}
 
 	@Override
 	public void proc() 
         {
-                String jewelName="";
+                String jewelName = "";
                 closestJewel = (Thing) closestJewelMO.getI();
                 cis = (CreatureInnerSense) innerSenseMO.getI();
                 known = (List<Thing>) knownMO.getI();
@@ -76,8 +76,8 @@ public class GetClosestJewel extends Codelet
 			double jewelY = 0;
 			try 
                         {
-				jewelX=closestJewel.getX1();
-				jewelY=closestJewel.getY1();
+				jewelX = closestJewel.getX1();
+				jewelY = closestJewel.getY1();
                                 jewelName = closestJewel.getName();                                
 			} catch (Exception e) 
                         {
@@ -85,8 +85,8 @@ public class GetClosestJewel extends Codelet
 				e.printStackTrace();
 			}
 
-			double selfX=cis.position.getX();
-			double selfY=cis.position.getY();
+			double selfX = cis.position.getX();
+			double selfY = cis.position.getY();
 
 			Point2D pJewel = new Point();
 			pJewel.setLocation(jewelX, jewelY);
@@ -98,10 +98,11 @@ public class GetClosestJewel extends Codelet
 			JSONObject message = new JSONObject();
 			try 
                         {
-				if (distance<reachDistance)
+				if (distance < reachDistance)
                                 { //gett it						
 					message.put("OBJECT", jewelName);
 					message.put("ACTION", "SACKIT");
+                                        System.out.println("GetClosestJewel.proc: "+message.toString());
 					handsMO.updateI(message.toString());
                                         DestroyClosestJewel();
 				}else

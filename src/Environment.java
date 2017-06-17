@@ -47,7 +47,8 @@ public class Environment
              World.createJewel(1, 200, 200);
              World.createJewel(2, 300, 300);
              World.createJewel(3, 400, 400);
-             World.grow(100);
+             World.createJewel(4, 140, 410);
+             //World.grow(1);
              
              c = proxy.createCreature(100,450,0);
              c.start();

@@ -60,18 +60,19 @@ public class GoToClosestApple extends Codelet {
 
 		if(closestApple != null)
 		{
-			double appleX=0;
-			double appleY=0;
-			try {
-                                appleX = closestApple.getX1();
-                                appleY = closestApple.getY1();
+		  double appleX = 0;
+		  double appleY = 0; 
+		  try 
+                  {
+                     appleX = closestApple.getX1();
+                     appleY = closestApple.getY1();
+		  } catch (Exception e) 
+                  {
+			e.printStackTrace();
+		  }
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			double selfX=cis.position.getX();
-			double selfY=cis.position.getY();
+		  double selfX = cis.position.getX();
+		  double selfY = cis.position.getY();
 
 			Point2D pApple = new Point();
 			pApple.setLocation(appleX, appleY);
@@ -81,7 +82,8 @@ public class GoToClosestApple extends Codelet {
 
 			double distance = pSelf.distance(pApple);
 			JSONObject message=new JSONObject();
-			try {
+			try 
+                        {
 				if(distance>reachDistance){ //Go to it
                                         message.put("ACTION", "GOTO");
 					message.put("X", (int)appleX);
@@ -94,6 +96,7 @@ public class GoToClosestApple extends Codelet {
 					message.put("Y", (int)appleY);
                                         message.put("SPEED", 0.0);	
 				}
+                                System.out.println("GoToClosestApple.proc: "+message.toString());
 				legsMO.updateI(message.toString());
 			} catch (JSONException e) {
 				e.printStackTrace();

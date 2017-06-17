@@ -33,8 +33,8 @@ import ws3dproxy.model.Thing;
  * 
  */
 
-public class Forage extends Codelet {
-    
+public class Forage extends Codelet 
+{    
         private MemoryObject knownMO;
         private List<Thing> known;
         private MemoryObject legsMO;
@@ -43,19 +43,24 @@ public class Forage extends Codelet {
 	/**
 	 * Default constructor
 	 */
-	public Forage(){       
+	public Forage()
+        {       
 	}
 
 	@Override
-	public void proc() {
+	public void proc() 
+        {
             known = (List<Thing>) knownMO.getI();
-            if (known.size() == 0) {
+            if (known.size() == 0) 
+            {
 		JSONObject message=new JSONObject();
 			try {
 				message.put("ACTION", "FORAGE");
+                                System.out.println("Forage.proc: "+message.toString());
 				legsMO.updateI(message.toString());
 			
-			} catch (JSONException e) {
+			} catch (JSONException e) 
+                        {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -64,16 +69,19 @@ public class Forage extends Codelet {
 	}
 
 	@Override
-	public void accessMemoryObjects() {
-            knownMO = (MemoryObject)this.getInput("KNOWN_APPLES");
-            legsMO=(MemoryObject)this.getOutput("LEGS");
+	public void accessMemoryObjects() 
+        {
+            //knownMO = (MemoryObject)this.getInput("KNOWN_APPLES");
+            knownMO = (MemoryObject)this.getInput("KNOWN_JEWELS");
+            legsMO =(MemoryObject)this.getOutput("LEGS");
 
 		// TODO Auto-generated method stub
 		
 	}
         
         @Override
-        public void calculateActivation() {
+        public void calculateActivation() 
+        {
             
         }
 

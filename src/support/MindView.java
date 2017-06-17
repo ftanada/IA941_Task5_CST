@@ -74,16 +74,20 @@ public class MindView extends javax.swing.JFrame {
         t.scheduleAtFixedRate(tt,0,500);
     }
     
-    public void tick() {
+    public void tick() 
+    {
         String alltext = "";
         if (mol.size() != 0) 
-            for (MemoryObject mo : mol) {
-                if (mo.getI() != null) {
+            for (MemoryObject mo : mol) 
+            {
+                if (mo.getI() != null) 
+                {
                     //Class cl = mo.getT();
                     //Object k = cl.cast(mo.getI());
                     Object k = mo.getI();
                     String moName = mo.getName();
-                    if (moName.equals("KNOWN_APPLES") || moName.equals("VISION")) {
+                    if (moName.equals("KNOWN_APPLES")) 
+                    {
                         //alltext += mo.getName()+": "+k+"<-> ";
                         alltext += mo.getName()+": [ ";
                         CopyOnWriteArrayList<Thing> l = new CopyOnWriteArrayList<>((List<Thing>)k);
@@ -94,14 +98,33 @@ public class MindView extends javax.swing.JFrame {
                         }    
                         alltext += "]\n";
                     }
-                    else if (moName.equals("CLOSEST_APPLE")) {
+                    else if (moName.equals("KNOWN_JEWELS")) 
+                    {
+                        alltext += mo.getName()+": [ ";
+                        CopyOnWriteArrayList<Thing> l = new CopyOnWriteArrayList<>((List<Thing>)k);
+                        for (Thing t : l) {
+                            String kindofthing = "j";
+                            if (t.getCategory() == Constants.categoryJEWEL) kindofthing = "j";
+                            alltext += kindofthing+"("+(int)(t.getX1()+t.getX2())/2+","+(int)(t.getY1()+t.getY2())/2+") ";
+                        }    
+                        alltext += "]\n";
+                    }
+                    else if (moName.equals("CLOSEST_APPLE")) 
+                    {
                         Thing t = (Thing)k;
                         String kindofthing = "t";
-                        if (t.getCategory() == 21) kindofthing = "a";
+                        if (t.getCategory() == Constants.categoryPFOOD) kindofthing = "a";
+                        alltext += moName+": "+kindofthing+"("+(int)(t.getX1()+t.getX2())/2+","+(int)(t.getY1()+t.getY2())/2+")\n";
+                    }
+                    else if (moName.equals("CLOSEST_JEWEL")) 
+                    {
+                        Thing t = (Thing)k;
+                        String kindofthing = "j";
+                        if (t.getCategory() == Constants.categoryJEWEL) kindofthing = "j";
                         alltext += moName+": "+kindofthing+"("+(int)(t.getX1()+t.getX2())/2+","+(int)(t.getY1()+t.getY2())/2+")\n";
                     }
                     else     
-                    alltext += mo.getName()+": "+k+"\n";
+                      alltext += mo.getName()+": "+k+"\n";
                 }
                 else
                     //alltext += mo.getName()+": "+mo.getI()+"\n";
@@ -109,10 +132,13 @@ public class MindView extends javax.swing.JFrame {
             }   
         text.setText(alltext);
         j++;
-        if (j == 7) {
-            try {
-              World.createFood(0,r.nextInt(800) , r.nextInt(600));
-            } catch (Exception e) {
+        if (j == 7) 
+        {
+            try 
+            {
+              //World.createFood(0,r.nextInt(800) , r.nextInt(600));
+            } catch (Exception e) 
+            {
                 e.printStackTrace();
             }
             j = 0;

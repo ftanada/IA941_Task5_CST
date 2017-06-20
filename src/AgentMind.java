@@ -41,6 +41,7 @@ import codelets.behaviors.GetClosestJewel;
 import codelets.behaviors.GoToClosestJewel;
 import codelets.perception.ClosestJewelDetector;
 import codelets.perception.JewelDetector;
+import ws3dproxy.model.Leaflet;
 
 /**
  *
@@ -55,7 +56,7 @@ public class AgentMind extends Mind
     {
         super();
                 
-        // Declare Memory Objects
+        // Declare Memory Objects        
 	MemoryObject legsMO;
 	MemoryObject handsMO;
         MemoryObject visionMO;
@@ -65,6 +66,7 @@ public class AgentMind extends Mind
         // FMT 2017
         MemoryObject closestJewelMO;
         MemoryObject knownJewelsMO;
+        MemoryObject leafletMO;
                                 
         //Initialize Memory Objects
         legsMO = createMemoryObject("LEGS", "");
@@ -83,7 +85,10 @@ public class AgentMind extends Mind
         closestJewelMO = createMemoryObject("CLOSEST_JEWEL", closestJewel);
         List<Thing> knownJewels = Collections.synchronizedList(new ArrayList<Thing>());
         knownJewelsMO = createMemoryObject("KNOWN_JEWELS", knownJewels);
-                
+        // handling leaflet
+        List<Leaflet> leaflets = env.myCreature.getLeaflets();
+        leafletMO = createMemoryObject("LEAFLET",leaflets);      
+        
         // Create and Populate MindViewer
         MindView mv = new MindView("MindView");
         mv.addMO(knownApplesMO);
@@ -100,20 +105,20 @@ public class AgentMind extends Mind
         mv.setVisible(true);
 		
 	// Create Sensor Codelets	
-	Codelet vision = new Vision(env.c);
+	Codelet vision = new Vision(env.myCreature);
 	vision.addOutput(visionMO);
         insertCodelet(vision); //Creates a vision sensor
 	
-	Codelet innerSense = new InnerSense(env.c);
+	Codelet innerSense = new InnerSense(env.myCreature);
 	innerSense.addOutput(innerSenseMO);
         insertCodelet(innerSense); //A sensor for the inner state of the creature
 		
 	// Create Actuator Codelets
-	Codelet legs = new LegsActionCodelet(env.c);
+	Codelet legs = new LegsActionCodelet(env.myCreature);
 	legs.addInput(legsMO);
         insertCodelet(legs);
 
-	Codelet hands = new HandsActionCodelet(env.c);
+	Codelet hands = new HandsActionCodelet(env.myCreature);
 	hands.addInput(handsMO);
         insertCodelet(hands);
 		
@@ -160,7 +165,7 @@ public class AgentMind extends Mind
 	closestJewelDetector.addInput(innerSenseMO);
 	closestJewelDetector.addOutput(closestJewelMO);
         insertCodelet(closestJewelDetector);
-		
+		       
 	// Create Behavior Codelets
 	Codelet goToClosestJewel = new GoToClosestJewel(creatureBasicSpeed,reachDistance);
 	goToClosestJewel.addInput(closestJewelMO);

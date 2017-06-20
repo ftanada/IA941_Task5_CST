@@ -31,7 +31,7 @@ public class Environment
     public String host = "localhost";
     public int port = 4011;
     public String robotID = "r0";
-    public Creature c = null;
+    public Creature myCreature = null;
     
     public Environment() 
     {
@@ -50,16 +50,17 @@ public class Environment
              World.createJewel(4, 140, 410);
              //World.grow(1);
              
-             c = proxy.createCreature(100,450,0);
-             c.start();
+             myCreature = proxy.createCreature(100,450,0);
+             myCreature.start();
              //c.setRobotID("r0");
              //c.startCamera("r0");
-             
+             // FMT initializeing leaflet
+             myCreature.genLeaflet();
              
           } catch (CommandExecException e) {
               
           }
-          System.out.println("Robot "+c.getName()+" is ready to go.");
+          System.out.println("Robot "+myCreature.getName()+" is ready to go.");
 		
 
 

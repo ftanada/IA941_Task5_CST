@@ -32,6 +32,7 @@ import br.unicamp.cst.core.entities.MemoryObject;
 import memory.CreatureInnerSense;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import ws3dproxy.model.Leaflet;
 import ws3dproxy.model.Thing;
 
 public class GetClosestJewel extends Codelet 
@@ -44,6 +45,9 @@ public class GetClosestJewel extends Codelet
         Thing closestJewel;
         CreatureInnerSense cis;
         List<Thing> known;
+        // FMT checking leaflets
+        private MemoryObject leafletsMO = null;
+        List<Leaflet> leaflets;
 
 	public GetClosestJewel(int reachDistance) 
         {
@@ -54,72 +58,109 @@ public class GetClosestJewel extends Codelet
 	@Override
 	public void accessMemoryObjects() 
         {
-	  closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
-	  innerSenseMO = (MemoryObject)this.getInput("INNER");
-	  handsMO = (MemoryObject)this.getOutput("HANDS");
-          knownMO = (MemoryObject)this.getOutput("KNOWN_JEWELS");
+	  closestJewelMO = (MemoryObject) this.getInput("CLOSEST_JEWEL");
+	  innerSenseMO = (MemoryObject) this.getInput("INNER");
+	  handsMO = (MemoryObject) this.getOutput("HANDS");
+          knownMO = (MemoryObject) this.getOutput("KNOWN_JEWELS");
+          // FMT leaflets
+          leafletsMO = (MemoryObject) this.getInput("LEAFLETS");
 	}
 
+        public boolean isInLeaflet(List<Leaflet> leaflets, String jewelColor)
+        {
+          Boolean belongs = false;
+          if (leaflets != null)
+          {
+            for (Leaflet leaflet: leaflets)                   
+            {
+                if (leaflet.ifInLeaflet(jewelColor) &&
+                    leaflet.getTotalNumberOfType(jewelColor) > 
+                        leaflet.getCollectedNumberOfType(jewelColor))
+                {
+                    System.out.println("isInLeaflet: found leafletJewel");
+                    belongs = true;
+                    break;
+                }
+            }          
+          }
+          return (belongs);
+        }
+        
 	@Override
 	public void proc() 
         {
-                String jewelName = "";
-                closestJewel = (Thing) closestJewelMO.getI();
-                cis = (CreatureInnerSense) innerSenseMO.getI();
-                known = (List<Thing>) knownMO.getI();
-		//Find distance between closest apple and self
-		//If closer than reachDistance, eat the apple
-		
-		if (closestJewel != null)
-		{
-			double jewelX = 0;
-			double jewelY = 0;
-			try 
-                        {
-				jewelX = closestJewel.getX1();
-				jewelY = closestJewel.getY1();
-                                jewelName = closestJewel.getName();                                
-			} catch (Exception e) 
-                        {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			double selfX = cis.position.getX();
-			double selfY = cis.position.getY();
-
-			Point2D pJewel = new Point();
-			pJewel.setLocation(jewelX, jewelY);
-
-			Point2D pSelf = new Point();
-			pSelf.setLocation(selfX, selfY);
-
-			double distance = pSelf.distance(pJewel);
-			JSONObject message = new JSONObject();
-			try 
-                        {
-				if (distance < reachDistance)
-                                { //gett it						
-					message.put("OBJECT", jewelName);
-					message.put("ACTION", "SACKIT");
-                                        System.out.println("GetClosestJewel.proc: "+message.toString());
-					handsMO.updateI(message.toString());
-                                        DestroyClosestJewel();
-				}else
-                                {
-					handsMO.updateI("");	//nothing
-				}
-				
-//				System.out.println(message);
-			} catch (JSONException e) 
-                        {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else
+            String jewelName = "";
+            closestJewel = (Thing) closestJewelMO.getI();
+            cis = (CreatureInnerSense) innerSenseMO.getI();
+            known = (List<Thing>) knownMO.getI();
+            //Find distance between closest apple and self
+  	    //If closer than reachDistance, eat the apple
+            // FMT retrieving leaflets
+            if (leafletsMO != null)
+              leaflets = (List<Leaflet>) leafletsMO.getI();
+            else 
+              leaflets = null;
+                
+	    if (closestJewel != null)
+	    {
+		double jewelX = 0;
+		double jewelY = 0;
+		try 
                 {
-			handsMO.updateI("");	//nothing
+		   jewelX = closestJewel.getX1();
+		   jewelY = closestJewel.getY1();
+                   jewelName = closestJewel.getName();                                
+		} catch (Exception e) 
+                {
+		   // TODO Auto-generated catch block
+		   e.printStackTrace();
 		}
+
+		double selfX = cis.position.getX();
+		double selfY = cis.position.getY();
+
+		Point2D pJewel = new Point();
+		pJewel.setLocation(jewelX, jewelY);
+
+		Point2D pSelf = new Point();
+		pSelf.setLocation(selfX, selfY);
+
+		double distance = pSelf.distance(pJewel);
+		JSONObject message = new JSONObject();
+		try 
+                {
+		    if (distance < reachDistance)
+                    { //gett or hide it, depends on leaflet						
+			message.put("OBJECT", jewelName);
+                        if (leaflets != null)
+                        {
+                          if (isInLeaflet(leaflets,closestJewel.getMaterial().getColorName()))
+		             message.put("ACTION", "SACKIT");
+                          else
+                             message.put("ACTION", "HIDEIT");
+                        }
+                        else
+                        {
+                            message.put("ACTION", "SACKIT");
+                        }
+                        System.out.println("GetClosestJewel.proc: "+message.toString());
+		        handsMO.updateI(message.toString());
+                        DestroyClosestJewel();
+	            } else
+                    {
+			handsMO.updateI("");	//nothing
+		    }
+				
+//		    System.out.println(message);
+		} catch (JSONException e) 
+                {
+		  // TODO Auto-generated catch block
+		  e.printStackTrace();
+		}
+	} else
+        {
+	   handsMO.updateI("");	//nothing
+        }
         //System.out.println("Before: "+known.size()+ " "+known);
         
         //System.out.println("After: "+known.size()+ " "+known);

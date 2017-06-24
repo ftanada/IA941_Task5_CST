@@ -66,6 +66,7 @@ public class AgentMind extends Mind
         // FMT 2017
         MemoryObject closestJewelMO;
         MemoryObject knownJewelsMO;
+        MemoryObject fuelMO;
         MemoryObject leafletMO;
                                 
         //Initialize Memory Objects
@@ -87,10 +88,13 @@ public class AgentMind extends Mind
         knownJewelsMO = createMemoryObject("KNOWN_JEWELS", knownJewels);
         // handling leaflet
         List<Leaflet> leaflets = env.myCreature.getLeaflets();
-        leafletMO = createMemoryObject("LEAFLET",leaflets);      
+        leafletMO = createMemoryObject("LEAFLETS",leaflets);     
+        // handling energy
+        double fuel = env.myCreature.getFuel();
+        fuelMO = createMemoryObject("FUEL",fuel);
         
         // Create and Populate MindViewer
-        MindView mv = new MindView("MindView");
+        MindView mv = new MindView("FMT_MindView");
         mv.addMO(knownApplesMO);
         mv.addMO(visionMO);
         mv.addMO(closestAppleMO);
@@ -100,6 +104,8 @@ public class AgentMind extends Mind
         // FMT 2017
         mv.addMO(closestJewelMO);
         mv.addMO(knownJewelsMO);
+        mv.addMO(leafletMO);
+        mv.addMO(fuelMO);
                         
         mv.StartTimer();
         mv.setVisible(true);
@@ -176,6 +182,7 @@ public class AgentMind extends Mind
 	Codelet getJewel = new GetClosestJewel(reachDistance);
 	getJewel.addInput(closestJewelMO);
 	getJewel.addInput(innerSenseMO);
+        getJewel.addInput(leafletMO);
 	getJewel.addOutput(handsMO);
         getJewel.addOutput(knownJewelsMO);
         insertCodelet(getJewel);

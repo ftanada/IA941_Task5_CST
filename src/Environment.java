@@ -48,7 +48,7 @@ public class Environment
              World.createJewel(2, 300, 300);
              World.createJewel(3, 400, 400);
              World.createJewel(4, 140, 410);
-             //World.grow(1);
+             World.grow(1);
              
              myCreature = proxy.createCreature(100,450,0);
              myCreature.start();
@@ -56,6 +56,7 @@ public class Environment
              //c.startCamera("r0");
              // FMT initializeing leaflet
              myCreature.genLeaflet();
+             myCreature.updateState();
              
           } catch (CommandExecException e) {
               

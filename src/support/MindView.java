@@ -50,8 +50,8 @@ class MVTimerTask extends TimerTask {
  *
  * @author rgudwin
  */
-public class MindView extends javax.swing.JFrame {
-
+public class MindView extends javax.swing.JFrame 
+{
     Timer t;
     List<MemoryObject> mol = new ArrayList<>();
     int j=0;
@@ -59,16 +59,19 @@ public class MindView extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
-    public MindView(String name) {
+    public MindView(String name) 
+    {
         initComponents();
         setTitle(name);
     }
     
-    public void addMO(MemoryObject moi) {
+    public void addMO(MemoryObject moi) 
+    {
         mol.add(moi);
     }
     
-    public void StartTimer() {
+    public void StartTimer() 
+    {
         t = new Timer();
         MVTimerTask tt = new MVTimerTask(this);
         t.scheduleAtFixedRate(tt,0,500);

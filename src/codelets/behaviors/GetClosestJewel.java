@@ -48,6 +48,7 @@ public class GetClosestJewel extends Codelet
         // FMT checking leaflets
         private MemoryObject leafletsMO = null;
         List<Leaflet> leaflets;
+        private MemoryObject fuelMO = null;
 
 	public GetClosestJewel(int reachDistance) 
         {
@@ -63,7 +64,7 @@ public class GetClosestJewel extends Codelet
 	  handsMO = (MemoryObject) this.getOutput("HANDS");
           knownMO = (MemoryObject) this.getOutput("KNOWN_JEWELS");
           // FMT leaflets
-          leafletsMO = (MemoryObject) this.getInput("LEAFLETS");
+          leafletsMO = (MemoryObject) this.getOutput("LEAFLETS");
 	}
 
         public boolean isInLeaflet(List<Leaflet> leaflets, String jewelColor)
@@ -97,7 +98,10 @@ public class GetClosestJewel extends Codelet
   	    //If closer than reachDistance, eat the apple
             // FMT retrieving leaflets
             if (leafletsMO != null)
+            {
               leaflets = (List<Leaflet>) leafletsMO.getI();
+              System.out.println("GetClosestJewel.proc: received leaflets");
+            }
             else 
               leaflets = null;
                 
@@ -135,9 +139,15 @@ public class GetClosestJewel extends Codelet
                         if (leaflets != null)
                         {
                           if (isInLeaflet(leaflets,closestJewel.getMaterial().getColorName()))
+                          {
 		             message.put("ACTION", "SACKIT");
+                             System.out.println("GetClosestJewel.proc:  sacking "+jewelName);
+                          }
                           else
+                          {
                              message.put("ACTION", "HIDEIT");
+                             System.out.println("GetClosestJewel.proc:  hiding "+jewelName);
+                          }
                         }
                         else
                         {

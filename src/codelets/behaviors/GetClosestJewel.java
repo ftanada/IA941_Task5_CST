@@ -32,8 +32,10 @@ import br.unicamp.cst.core.entities.MemoryObject;
 import memory.CreatureInnerSense;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import ws3dproxy.model.Creature;
 import ws3dproxy.model.Leaflet;
 import ws3dproxy.model.Thing;
+import ws3dproxy.util.Constants;
 
 public class GetClosestJewel extends Codelet 
 {
@@ -49,11 +51,13 @@ public class GetClosestJewel extends Codelet
         private MemoryObject leafletsMO = null;
         List<Leaflet> leaflets;
         private MemoryObject fuelMO = null;
+        Creature myCreature;
 
-	public GetClosestJewel(int reachDistance) 
+	public GetClosestJewel(int reachDistance, Creature myCreature) 
         {
            setTimeStep(50);
            this.reachDistance = reachDistance;
+           this.myCreature = myCreature;
 	}
 
 	@Override
@@ -64,7 +68,7 @@ public class GetClosestJewel extends Codelet
 	  handsMO = (MemoryObject) this.getOutput("HANDS");
           knownMO = (MemoryObject) this.getOutput("KNOWN_JEWELS");
           // FMT leaflets
-          leafletsMO = (MemoryObject) this.getOutput("LEAFLETS");
+          leafletsMO = (MemoryObject) this.getInput("LEAFLETS");
 	}
 
         public boolean isInLeaflet(List<Leaflet> leaflets, String jewelColor)
@@ -87,6 +91,33 @@ public class GetClosestJewel extends Codelet
           return (belongs);
         }
         
+        public boolean isLeafletComplete(List<Leaflet> leaflets)
+        {
+          Boolean complete = true;
+          int iTotalLeft = 0;
+          if (leaflets != null)
+          {
+            for (Leaflet leaflet: leaflets)                   
+            {
+                if (leaflet.ifInLeaflet(Constants.colorRED))
+                  iTotalLeft = iTotalLeft + leaflet.getMissingNumberOfType(Constants.colorRED);
+                if (leaflet.ifInLeaflet(Constants.colorGREEN))
+                  iTotalLeft = iTotalLeft + leaflet.getMissingNumberOfType(Constants.colorGREEN);
+                if (leaflet.ifInLeaflet(Constants.colorBLUE))
+                  iTotalLeft = iTotalLeft + leaflet.getMissingNumberOfType(Constants.colorBLUE);
+                if (leaflet.ifInLeaflet(Constants.colorYELLOW))
+                  iTotalLeft = iTotalLeft + leaflet.getMissingNumberOfType(Constants.colorYELLOW);
+                if (leaflet.ifInLeaflet(Constants.colorMAGENTA))
+                  iTotalLeft = iTotalLeft + leaflet.getMissingNumberOfType(Constants.colorMAGENTA);
+                if (leaflet.ifInLeaflet(Constants.colorWHITE))
+                  iTotalLeft = iTotalLeft + leaflet.getMissingNumberOfType(Constants.colorWHITE);
+            }          
+          }
+          if (iTotalLeft > 0)
+             complete = false;
+          return (complete);
+        }
+        
 	@Override
 	public void proc() 
         {
@@ -100,11 +131,23 @@ public class GetClosestJewel extends Codelet
             if (leafletsMO != null)
             {
               leaflets = (List<Leaflet>) leafletsMO.getI();
-              System.out.println("GetClosestJewel.proc: received leaflets");
+              //System.out.println("GetClosestJewel.proc: received leaflets");
             }
             else 
               leaflets = null;
                 
+            // FMT check if leaflet is compete (if yes, halt)
+            if (isLeafletComplete(leaflets))
+            {
+               System.out.println("GetClosestJewel.proc: leaflets completed.");
+               if (myCreature != null)
+               {    
+                 try { myCreature.stop(); }
+                   catch (Exception e) { e.printStackTrace(); }
+               }
+               return;
+            }
+            
 	    if (closestJewel != null)
 	    {
 		double jewelX = 0;

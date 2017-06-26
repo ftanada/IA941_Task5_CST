@@ -29,61 +29,63 @@ import ws3dproxy.model.Thing;
 /** 
  * 
  * @author klaus
- * 
+ * Altered by fabio Tanada
  * 
  */
 
 public class Forage extends Codelet 
 {    
-        private MemoryObject knownMO;
-        private List<Thing> known;
-        private MemoryObject legsMO;
+    private MemoryObject knownApplesMO;
+    private List<Thing> known;
+    private MemoryObject legsMO;
+    // FMT
+    private MemoryObject knownJewelsMO;
 
+    /**
+    * Default constructor
+    */
+    public Forage()
+    {       
+    }
 
-	/**
-	 * Default constructor
-	 */
-	public Forage()
-        {       
-	}
-
-	@Override
-	public void proc() 
+    @Override
+    public void proc() 
+    {
+        known = (List<Thing>) knownJewelsMO.getI();
+        if (known.size() == 0) 
         {
-            known = (List<Thing>) knownMO.getI();
-            if (known.size() == 0) 
+          known = (List<Thing>) knownApplesMO.getI();
+          if (known.size() == 0) 
+          {
+            JSONObject message = new JSONObject();
+  	    try 
             {
-		JSONObject message=new JSONObject();
-			try {
-				message.put("ACTION", "FORAGE");
-                                System.out.println("Forage.proc: "+message.toString());
-				legsMO.updateI(message.toString());
-			
-			} catch (JSONException e) 
-                        {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            }            
+		message.put("ACTION", "FORAGE");
+                System.out.println("Forage.proc: "+message.toString());
+                legsMO.updateI(message.toString());		
+	    } catch (JSONException e) 
+               {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	       }
+          }
+        }            
 		
-	}
+    }
 
-	@Override
-	public void accessMemoryObjects() 
-        {
-            //knownMO = (MemoryObject)this.getInput("KNOWN_APPLES");
-            knownMO = (MemoryObject)this.getInput("KNOWN_JEWELS");
-            legsMO =(MemoryObject)this.getOutput("LEGS");
+    @Override
+    public void accessMemoryObjects() 
+    {
+        knownApplesMO = (MemoryObject)this.getInput("KNOWN_APPLES");
+        knownJewelsMO = (MemoryObject)this.getInput("KNOWN_JEWELS");
+        legsMO =(MemoryObject)this.getOutput("LEGS");
 
-		// TODO Auto-generated method stub
-		
-	}
+        // TODO Auto-generated method stub	
+    }
         
-        @Override
-        public void calculateActivation() 
-        {
+    @Override
+    public void calculateActivation() 
+    {
             
-        }
-
-
+    }
 }

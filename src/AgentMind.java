@@ -66,6 +66,8 @@ public class AgentMind extends Mind
         // FMT 2017
         MemoryObject closestJewelMO;
         MemoryObject knownJewelsMO;
+        MemoryObject closestNutMO;
+        MemoryObject knownNutsMO;
         MemoryObject fuelMO;
         MemoryObject leafletMO;
                                 
@@ -86,6 +88,11 @@ public class AgentMind extends Mind
         closestJewelMO = createMemoryObject("CLOSEST_JEWEL", closestJewel);
         List<Thing> knownJewels = Collections.synchronizedList(new ArrayList<Thing>());
         knownJewelsMO = createMemoryObject("KNOWN_JEWELS", knownJewels);
+        // FMT handling nuts as well
+        Thing closestNut = null;
+        closestNutMO = createMemoryObject("CLOSEST_NUT", closestNut);
+        List<Thing> knownNuts = Collections.synchronizedList(new ArrayList<Thing>());
+        knownNutsMO = createMemoryObject("KNOWN_NUTS", knownNuts);
         // handling leaflet
         List<Leaflet> leaflets = env.myCreature.getLeaflets();
         leafletMO = createMemoryObject("LEAFLETS",leaflets);     
@@ -104,6 +111,8 @@ public class AgentMind extends Mind
         // FMT 2017
         mv.addMO(closestJewelMO);
         mv.addMO(knownJewelsMO);
+        mv.addMO(closestNutMO);
+        mv.addMO(knownNutsMO);
         mv.addMO(leafletMO);
         mv.addMO(fuelMO);
                         
@@ -179,7 +188,7 @@ public class AgentMind extends Mind
 	goToClosestJewel.addOutput(legsMO);
         insertCodelet(goToClosestJewel);
 		
-	Codelet getJewel = new GetClosestJewel(reachDistance);
+	Codelet getJewel = new GetClosestJewel(reachDistance, env.myCreature);
 	getJewel.addInput(closestJewelMO);
 	getJewel.addInput(innerSenseMO);
         getJewel.addInput(leafletMO);
@@ -188,13 +197,15 @@ public class AgentMind extends Mind
         insertCodelet(getJewel);
                 
         Codelet forageJewel = new Forage();
+        forageJewel.addInput(knownApplesMO);
 	forageJewel.addInput(knownJewelsMO);
+        forageJewel.addInput(fuelMO);
         forageJewel.addOutput(legsMO);
         insertCodelet(forageJewel);
                 
         // sets a time step for running the codelets to avoid heating too much your machine
         for (Codelet c : this.getCodeRack().getAllCodelets())
-          c.setTimeStep(1500);
+          c.setTimeStep(1000);
 		
 	// Start Cognitive Cycle
 	start(); 

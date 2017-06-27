@@ -34,14 +34,15 @@ import ws3dproxy.model.Thing;
  * @author klaus
  *
  */
-public class AppleDetector extends Codelet {
+public class AppleDetector extends Codelet 
+{
+    private MemoryObject visionMO;
+    private MemoryObject knownApplesMO;
 
-        private MemoryObject visionMO;
-        private MemoryObject knownApplesMO;
-
-	public AppleDetector(){
-		
-	}
+    public AppleDetector()
+    {
+      this.setTimeStep(200);	
+    }
 
 	@Override
 	public void accessMemoryObjects() {

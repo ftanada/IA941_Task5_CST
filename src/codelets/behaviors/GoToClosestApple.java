@@ -29,47 +29,63 @@ import br.unicamp.cst.core.entities.MemoryObject;
 import memory.CreatureInnerSense;
 import ws3dproxy.model.Thing;
 
-public class GoToClosestApple extends Codelet {
+public class GoToClosestApple extends Codelet 
+{
+  private MemoryObject closestAppleMO;
+  private MemoryObject fuelMO = null;
+  private MemoryObject legsMO;
+  private MemoryObject selfInfoMO;
+  private int creatureBasicSpeed;
+  private double reachDistance;
 
-	private MemoryObject closestAppleMO;
-	private MemoryObject selfInfoMO;
-	private MemoryObject legsMO;
-	private int creatureBasicSpeed;
-	private double reachDistance;
+  public GoToClosestApple(int creatureBasicSpeed, int reachDistance) 
+  {
+    this.creatureBasicSpeed = creatureBasicSpeed;
+    this.reachDistance = reachDistance;
+    this.setTimeStep(1000);
+  }
 
-	public GoToClosestApple(int creatureBasicSpeed, int reachDistance) {
-		this.creatureBasicSpeed=creatureBasicSpeed;
-		this.reachDistance=reachDistance;
-	}
+  @Override
+  public void accessMemoryObjects() 
+  {
+    closestAppleMO = (MemoryObject)this.getInput("CLOSEST_APPLE");
+    selfInfoMO = (MemoryObject)this.getInput("INNER");
+    legsMO = (MemoryObject)this.getOutput("LEGS");
+    fuelMO = (MemoryObject) this.getInput("FUEL");
+  }
 
-	@Override
-	public void accessMemoryObjects() {
-		closestAppleMO=(MemoryObject)this.getInput("CLOSEST_APPLE");
-		selfInfoMO=(MemoryObject)this.getInput("INNER");
-		legsMO=(MemoryObject)this.getOutput("LEGS");
-	}
+  @Override
+  public void proc() 
+  {
+      // FMT first check fuel / energy
+      if (fuelMO != null)
+      {
+        double fuel = (double) fuelMO.getI();
+        if (fuel > 40)
+        {
+          System.out.println("GoToClosestApple.proc: abort with high energy "+fuel);
+          return;
+        }
+      }
+      // Find distance between creature and closest apple
+      //If far, go towards it
+      //If close, stops
 
-	@Override
-	public void proc() {
-		// Find distance between creature and closest apple
-		//If far, go towards it
-		//If close, stops
+        Thing closestApple = (Thing) closestAppleMO.getI();
+        CreatureInnerSense cis = (CreatureInnerSense) selfInfoMO.getI();
 
-                Thing closestApple = (Thing) closestAppleMO.getI();
-                CreatureInnerSense cis = (CreatureInnerSense) selfInfoMO.getI();
-
-		if(closestApple != null)
-		{
-		  double appleX = 0;
-		  double appleY = 0; 
-		  try 
-                  {
-                     appleX = closestApple.getX1();
-                     appleY = closestApple.getY1();
-		  } catch (Exception e) 
-                  {
-			e.printStackTrace();
-		  }
+	if (closestApple != null)
+	{
+	  double appleX = 0;
+	  double appleY = 0; 
+	  try 
+          {
+            appleX = closestApple.getX1();
+            appleY = closestApple.getY1();
+          } catch (Exception e) 
+            {
+		e.printStackTrace();
+            }
 
 		  double selfX = cis.position.getX();
 		  double selfY = cis.position.getY();

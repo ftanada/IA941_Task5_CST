@@ -32,14 +32,24 @@ public class Environment
     public int port = 4011;
     public String robotID = "r0";
     public Creature myCreature = null;
+    public World w = null;
     
     public Environment() 
     {
-          WS3DProxy proxy = new WS3DProxy();
-          try 
-          {   
-             World w = World.getInstance();
-             w.reset();
+        WS3DProxy proxy = new WS3DProxy();
+        try 
+        {   
+            w = World.getInstance();
+            w.reset();
+             
+            myCreature = proxy.createCreature(100,450,0);
+            myCreature.start();
+            //c.setRobotID("r0");
+            //c.startCamera("r0");
+            // FMT initializeing leaflet
+            myCreature.genLeaflet();
+            myCreature.updateState();
+             
              World.createFood(0, 350, 75);
              World.createFood(0, 100, 220);
              World.createFood(0, 250, 210);
@@ -49,15 +59,6 @@ public class Environment
              World.createJewel(3, 400, 400);
              World.createJewel(4, 140, 410);
              World.grow(1);
-             
-             myCreature = proxy.createCreature(100,450,0);
-             myCreature.start();
-             //c.setRobotID("r0");
-             //c.startCamera("r0");
-             // FMT initializeing leaflet
-             myCreature.genLeaflet();
-             myCreature.updateState();
-             
           } catch (CommandExecException e) {
               
           }

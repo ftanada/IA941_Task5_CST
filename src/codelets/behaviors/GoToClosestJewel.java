@@ -33,29 +33,43 @@ import ws3dproxy.model.Thing;
 
 public class GoToClosestJewel extends Codelet 
 {
-	private MemoryObject closestJewelMO;
-	private MemoryObject selfInfoMO;
-	private MemoryObject legsMO;
-	private int creatureBasicSpeed;
-	private double reachDistance;
+    private MemoryObject closestJewelMO;
+    private MemoryObject selfInfoMO;
+    private MemoryObject legsMO;
+    private int creatureBasicSpeed; 
+    private double reachDistance;
+    double fuel = 0;
+    private MemoryObject fuelMO = null;
 
-	public GoToClosestJewel(int creatureBasicSpeed, int reachDistance) 
-        {
-		this.creatureBasicSpeed = creatureBasicSpeed;
-		this.reachDistance=reachDistance;
-	}
+    public GoToClosestJewel(int creatureBasicSpeed, int reachDistance) 
+    {
+	this.creatureBasicSpeed = creatureBasicSpeed;
+	this.reachDistance = reachDistance;
+        this.setTimeStep(1000);
+    }
 
-	@Override
-	public void accessMemoryObjects() 
-        {
-		closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
-		selfInfoMO = (MemoryObject)this.getInput("INNER");
-		legsMO = (MemoryObject)this.getOutput("LEGS");
-	}
+    @Override
+    public void accessMemoryObjects() 
+    {
+	  closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
+	  selfInfoMO = (MemoryObject)this.getInput("INNER");
+	  legsMO = (MemoryObject)this.getOutput("LEGS");
+          fuelMO = (MemoryObject) this.getInput("FUEL");
+    }
 
 	@Override
 	public void proc() 
         {
+            // FMT checking energy level
+            if (fuelMO != null)
+            {
+              fuel = (double) fuelMO.getI();
+              if (fuel < 40)
+              {
+                 System.out.println("GoToClosestJewel.proc: abort with low energy "+fuel);
+                 return;
+              }
+            }
 		// Find distance between creature and closest apple
 		//If far, go towards it
 		//If close, stops

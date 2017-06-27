@@ -153,6 +153,7 @@ public class AgentMind extends Mind
 	Codelet goToClosestApple = new GoToClosestApple(creatureBasicSpeed,reachDistance);
 	goToClosestApple.addInput(closestAppleMO);
 	goToClosestApple.addInput(innerSenseMO);
+        goToClosestApple.addInput(fuelMO);
 	goToClosestApple.addOutput(legsMO);
         //insertCodelet(goToClosestApple);
 		
@@ -185,10 +186,11 @@ public class AgentMind extends Mind
 	Codelet goToClosestJewel = new GoToClosestJewel(creatureBasicSpeed,reachDistance);
 	goToClosestJewel.addInput(closestJewelMO);
 	goToClosestJewel.addInput(innerSenseMO);
+        goToClosestJewel.addInput(fuelMO);
 	goToClosestJewel.addOutput(legsMO);
         insertCodelet(goToClosestJewel);
 		
-	Codelet getJewel = new GetClosestJewel(reachDistance, env.myCreature);
+	Codelet getJewel = new GetClosestJewel(reachDistance, env.myCreature, env.w);
 	getJewel.addInput(closestJewelMO);
 	getJewel.addInput(innerSenseMO);
         getJewel.addInput(leafletMO);
@@ -204,8 +206,8 @@ public class AgentMind extends Mind
         insertCodelet(forageJewel);
                 
         // sets a time step for running the codelets to avoid heating too much your machine
-        for (Codelet c : this.getCodeRack().getAllCodelets())
-          c.setTimeStep(1000);
+        //for (Codelet c : this.getCodeRack().getAllCodelets())
+        //  c.setTimeStep(500);
 		
 	// Start Cognitive Cycle
 	start(); 

@@ -32,16 +32,16 @@ import ws3dproxy.model.Thing;
  */
 public class ClosestJewelDetector extends Codelet 
 {
-	private MemoryObject knownMO;
-	private MemoryObject closestJewelMO;
-	private MemoryObject innerSenseMO;
+    private MemoryObject knownMO;
+    private MemoryObject closestJewelMO;
+    private MemoryObject innerSenseMO;
 	
-        private List<Thing> known;
+    private List<Thing> known;
 
-	public ClosestJewelDetector() 
-        {
-	}
-
+    public ClosestJewelDetector() 
+    {
+       this.setTimeStep(200);
+    }
 
 	@Override
 	public void accessMemoryObjects() 

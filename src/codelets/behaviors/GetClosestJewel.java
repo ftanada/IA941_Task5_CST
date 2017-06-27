@@ -35,41 +35,44 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import ws3dproxy.model.Creature;
 import ws3dproxy.model.Leaflet;
 import ws3dproxy.model.Thing;
+import ws3dproxy.model.World;
 import ws3dproxy.util.Constants;
 
 public class GetClosestJewel extends Codelet 
 {
-	private MemoryObject closestJewelMO;
-	private MemoryObject innerSenseMO;
-        private MemoryObject knownMO;
-	private int reachDistance;
-	private MemoryObject handsMO;
-        Thing closestJewel;
-        CreatureInnerSense cis;
-        List<Thing> known;
-        // FMT checking leaflets
-        private MemoryObject leafletsMO = null;
-        List<Leaflet> leaflets;
-        private MemoryObject fuelMO = null;
-        Creature myCreature;
+    private MemoryObject closestJewelMO;
+    private MemoryObject innerSenseMO;
+    private MemoryObject knownMO;
+    private int reachDistance;
+    private MemoryObject handsMO;
+    Thing closestJewel;
+    CreatureInnerSense cis;
+    List<Thing> known;
+    // FMT checking leaflets
+    private MemoryObject leafletsMO = null;
+    List<Leaflet> leaflets;
+    Creature myCreature;
+    World myWorld = null;
 
-	public GetClosestJewel(int reachDistance, Creature myCreature) 
-        {
-           setTimeStep(50);
-           this.reachDistance = reachDistance;
-           this.myCreature = myCreature;
-	}
+    public GetClosestJewel(int reachDistance, Creature myCreature, World w) 
+    {
+        setTimeStep(50);
+        this.reachDistance = reachDistance;
+        this.myCreature = myCreature;
+        this.myWorld = w;
+        this.setTimeStep(100);
+    }
 
-	@Override
-	public void accessMemoryObjects() 
-        {
-	  closestJewelMO = (MemoryObject) this.getInput("CLOSEST_JEWEL");
-	  innerSenseMO = (MemoryObject) this.getInput("INNER");
-	  handsMO = (MemoryObject) this.getOutput("HANDS");
-          knownMO = (MemoryObject) this.getOutput("KNOWN_JEWELS");
-          // FMT leaflets
-          leafletsMO = (MemoryObject) this.getInput("LEAFLETS");
-	}
+    @Override
+    public void accessMemoryObjects() 
+    {
+       closestJewelMO = (MemoryObject) this.getInput("CLOSEST_JEWEL");
+       innerSenseMO = (MemoryObject) this.getInput("INNER");
+       handsMO = (MemoryObject) this.getOutput("HANDS");
+       knownMO = (MemoryObject) this.getOutput("KNOWN_JEWELS");
+       // FMT leaflets
+       leafletsMO = (MemoryObject) this.getInput("LEAFLETS");
+    }
 
         public boolean isInLeaflet(List<Leaflet> leaflets, String jewelColor)
         {
@@ -142,8 +145,15 @@ public class GetClosestJewel extends Codelet
                System.out.println("GetClosestJewel.proc: leaflets completed.");
                if (myCreature != null)
                {    
-                 try { myCreature.stop(); }
-                   catch (Exception e) { e.printStackTrace(); }
+                 try 
+                 {
+                     if (myWorld != null)
+                     {
+                       myWorld.reset();
+                     }
+                     myCreature.stop(); 
+                 }
+                 catch (Exception e) { e.printStackTrace(); }
                }
                return;
             }

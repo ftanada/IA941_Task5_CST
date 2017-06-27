@@ -19,8 +19,6 @@
 
 package codelets.perception;
 
-
-
 import br.unicamp.cst.core.entities.Codelet;
 import br.unicamp.cst.core.entities.MemoryObject;
 import java.util.Collections;
@@ -35,16 +33,16 @@ import ws3dproxy.model.Thing;
  */
 public class ClosestAppleDetector extends Codelet 
 {
-	private MemoryObject knownMO;
-	private MemoryObject closestAppleMO;
-	private MemoryObject innerSenseMO;
+    private MemoryObject knownMO;
+    private MemoryObject closestAppleMO;
+    private MemoryObject innerSenseMO;
 	
-        private List<Thing> known;
+    private List<Thing> known;
 
-	public ClosestAppleDetector() 
-        {
-	}
-
+    public ClosestAppleDetector() 
+    {
+        this.setTimeStep(200);
+    }
 
 	@Override
 	public void accessMemoryObjects() 

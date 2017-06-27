@@ -45,7 +45,8 @@ public class Forage extends Codelet
     * Default constructor
     */
     public Forage()
-    {       
+    {
+        this.setTimeStep(1000);
     }
 
     @Override

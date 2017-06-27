@@ -19,7 +19,6 @@
 
 package codelets.motor;
 
-
 import org.json.JSONObject;
 
 import br.unicamp.cst.core.entities.Codelet;
@@ -36,20 +35,22 @@ import ws3dproxy.model.Creature;
  *
  */
 
-public class LegsActionCodelet extends Codelet{
+public class LegsActionCodelet extends Codelet
+{
+    private MemoryObject legsActionMO;
+    private double previousTargetx=0;
+    private double previousTargety=0;
+    private String previousLegsAction="";
+    private Creature c;
+    double old_angle = 0;
+    int k = 0;
+    static Logger log = Logger.getLogger(LegsActionCodelet.class.getCanonicalName());
 
-	private MemoryObject legsActionMO;
-	private double previousTargetx=0;
-	private double previousTargety=0;
-	private String previousLegsAction="";
-        private Creature c;
-        double old_angle = 0;
-        int k=0;
-        static Logger log = Logger.getLogger(LegsActionCodelet.class.getCanonicalName());
-
-	public LegsActionCodelet(Creature nc) {
-		c = nc;
-	}
+    public LegsActionCodelet(Creature nc) 
+    {
+	c = nc;
+        this.setTimeStep(1000);
+    }
 	
 	@Override
 	public void accessMemoryObjects() {

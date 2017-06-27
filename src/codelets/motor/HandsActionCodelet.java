@@ -19,7 +19,6 @@
 
 package codelets.motor;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,15 +37,17 @@ import ws3dproxy.model.Creature;
 
 public class HandsActionCodelet extends Codelet
 {
-	private MemoryObject handsMO;
-	private String previousHandsAction="";
-        private Creature c;
-        private Random r = new Random();
-        static Logger log = Logger.getLogger(HandsActionCodelet.class.getCanonicalName());
+    private MemoryObject handsMO;
+    private String previousHandsAction="";
+    private Creature c;
+    private Random r = new Random();
+    static Logger log = Logger.getLogger(HandsActionCodelet.class.getCanonicalName());
 
-	public HandsActionCodelet(Creature nc) {
-                c = nc;
-	}
+    public HandsActionCodelet(Creature nc) 
+    {
+        c = nc;
+        this.setTimeStep(100);
+    }
 	
         @Override
 	public void accessMemoryObjects() 

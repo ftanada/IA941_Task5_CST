@@ -19,12 +19,14 @@
 
 package codelets.perception;
 
+import support.GridMap;
 import br.unicamp.cst.core.entities.Codelet;
 import br.unicamp.cst.core.entities.MemoryObject;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import ws3dproxy.model.Thing;
+
 
 /**
  * Detect apples in the vision field.
@@ -34,56 +36,71 @@ import ws3dproxy.model.Thing;
  * @author klaus
  *
  */
-public class NutDetector extends Codelet 
+public class WallDetector extends Codelet 
 {
-        private MemoryObject visionMO;
-        private MemoryObject knownNutsMO;
+    private MemoryObject visionMO;
+    private MemoryObject knownWallsMO;
+    private GridMap myMap;
 
-	public NutDetector()
-        {		
-	}
+    public WallDetector(GridMap map)
+    {
+      this.setTimeStep(200);	
+      myMap = map;
+    }
 
-	@Override
-	public void accessMemoryObjects() 
+    @Override
+    public void accessMemoryObjects() 
+    {
+        synchronized(this) 
         {
-            synchronized(this) 
+	    this.visionMO=(MemoryObject)this.getInput("VISION");
+        }
+	this.knownWallsMO=(MemoryObject)this.getOutput("KNOWN_WALLS");
+    }
+
+    @Override
+    public void proc() 
+    {
+        CopyOnWriteArrayList<Thing> vision;
+        List<Thing> known;
+        synchronized (visionMO) 
+        {
+            vision = new CopyOnWriteArrayList((List<Thing>) visionMO.getI());    
+            known = Collections.synchronizedList((List<Thing>) knownWallsMO.getI());
+            synchronized(vision) 
             {
-              this.visionMO=(MemoryObject)this.getInput("VISION");
-            }
-	    this.knownNutsMO=(MemoryObject)this.getOutput("KNOWN_NUTS");
-	}
-
-	@Override
-	public void proc() 
-        {
-            CopyOnWriteArrayList<Thing> vision;
-            List<Thing> known;
-            synchronized (visionMO) {
-               vision = new CopyOnWriteArrayList((List<Thing>) visionMO.getI());    
-               known = Collections.synchronizedList((List<Thing>) knownNutsMO.getI());
-               synchronized(vision) 
-               {
-                 for (Thing t : vision) 
-                 {
+                for (Thing t : vision) 
+                {
                     boolean found = false;
-                    synchronized(known) {
+                    synchronized(known) 
+                    {
                        CopyOnWriteArrayList<Thing> myknown = new CopyOnWriteArrayList<>(known);
                        for (Thing e : myknown)
-                          if (t.getName().equals(e.getName())) {
+                          if (t.getName().equals(e.getName())) 
+                          {
                             found = true;
                             break;
                           }
-                       if (found == false && t.getName().contains("NPFood") && !t.getName().contains("PFood")) known.add(t);
-                    }               
+                       if (found == false && t.getName().contains("Brick"))
+                       {
+                           known.add(t);
+                           if (myMap != null)
+                             myMap.markWall(t);
+                       }
+                    }
+               
                  }
                }
             }
 	}// end proc
         
-        @Override
-        public void calculateActivation() 
-        {
-        }
+    @Override
+    public void calculateActivation() 
+    {
+        
+    }
+
+
 }//end class
 
 

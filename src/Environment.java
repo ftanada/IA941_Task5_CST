@@ -58,7 +58,7 @@ public class Environment
              World.createJewel(2, 300, 300);
              World.createJewel(3, 400, 400);
              World.createJewel(4, 140, 410);
-             World.grow(1);
+             World.grow(2);
           } catch (CommandExecException e) {
               
           }

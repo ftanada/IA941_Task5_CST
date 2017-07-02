@@ -32,6 +32,10 @@ import br.unicamp.cst.core.entities.MemoryObject;
 import memory.CreatureInnerSense;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import ws3dproxy.CommandExecException;
+import ws3dproxy.WS3DProxy;
 import ws3dproxy.model.Creature;
 import ws3dproxy.model.Leaflet;
 import ws3dproxy.model.Thing;
@@ -56,7 +60,6 @@ public class GetClosestJewel extends Codelet
 
     public GetClosestJewel(int reachDistance, Creature myCreature, World w) 
     {
-        setTimeStep(50);
         this.reachDistance = reachDistance;
         this.myCreature = myCreature;
         this.myWorld = w;
@@ -150,8 +153,16 @@ public class GetClosestJewel extends Codelet
                      if (myWorld != null)
                      {
                        myWorld.reset();
+                       myWorld.createBrick(2,10.0,580.0,100.00,590.0);
+                       myWorld.createBrick(2,230.0,6.0,240.00,400.0);
+                       myWorld.createBrick(2,450.0,380.0,460.00,594.00);
+                       myWorld.createBrick(2,630.0,6.0,640.00,370.0);            
+                       myWorld.createBrick(2,100.0,300.0,240.00,310.0);
+                       WS3DProxy proxy = new WS3DProxy();
+                       myCreature = proxy.createCreature(10,50,0);
+                       myCreature.start();
                      }
-                     myCreature.stop(); 
+                     //myCreature.stop(); 
                  }
                  catch (Exception e) { e.printStackTrace(); }
                }
@@ -209,6 +220,11 @@ public class GetClosestJewel extends Codelet
                         System.out.println("GetClosestJewel.proc: "+message.toString());
 		        handsMO.updateI(message.toString());
                         DestroyClosestJewel();
+                        // FMT feed another jewel into world
+                        if (myWorld != null)
+                        {
+                            myWorld.createJewel(1, 200, 200);
+                        }
 	            } else
                     {
 			handsMO.updateI("");	//nothing
@@ -219,7 +235,9 @@ public class GetClosestJewel extends Codelet
                 {
 		  // TODO Auto-generated catch block
 		  e.printStackTrace();
-		}
+		} catch (CommandExecException ex) {
+                    Logger.getLogger(GetClosestJewel.class.getName()).log(Level.SEVERE, null, ex);
+                }
 	} else
         {
 	   handsMO.updateI("");	//nothing

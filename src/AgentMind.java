@@ -37,10 +37,15 @@ import memory.CreatureInnerSense;
 import support.MindView;
 import ws3dproxy.model.Thing;
 
+import codelets.behaviors.EatClosestNut;
+import codelets.perception.NutDetector;
 import codelets.behaviors.GetClosestJewel;
 import codelets.behaviors.GoToClosestJewel;
+import codelets.behaviors.GoToEndOfMaze;
 import codelets.perception.ClosestJewelDetector;
 import codelets.perception.JewelDetector;
+import codelets.perception.WallDetector;
+import support.GridMap;
 import ws3dproxy.model.Leaflet;
 
 /**
@@ -70,7 +75,9 @@ public class AgentMind extends Mind
         MemoryObject knownNutsMO;
         MemoryObject fuelMO;
         MemoryObject leafletMO;
-                                
+        // FMT path
+        MemoryObject knownWallsMO;                                
+        
         //Initialize Memory Objects
         legsMO = createMemoryObject("LEGS", "");
 	handsMO = createMemoryObject("HANDS", "");
@@ -99,6 +106,10 @@ public class AgentMind extends Mind
         // handling energy
         double fuel = env.myCreature.getFuel();
         fuelMO = createMemoryObject("FUEL",fuel);
+        
+        // handling walls
+        List<Thing> knownWalls = Collections.synchronizedList(new ArrayList<Thing>());
+        knownWallsMO = createMemoryObject("KNOWN_WALLS", knownWalls);
         
         // Create and Populate MindViewer
         MindView mv = new MindView("FMT_MindView");
@@ -169,6 +180,19 @@ public class AgentMind extends Mind
         //forage.addOutput(legsMO);
         //insertCodelet(forage);
                 
+        Codelet nd = new NutDetector();
+        nd.addInput(visionMO);
+        nd.addOutput(knownNutsMO);
+        insertCodelet(nd);
+
+        // FMT eating nuts
+	Codelet eatNut = new EatClosestNut(reachDistance);
+	eatNut.addInput(closestNutMO);
+	eatNut.addInput(innerSenseMO);
+	eatNut.addOutput(handsMO);
+        eatNut.addOutput(knownNutsMO);
+        insertCodelet(eatNut);
+                
         // FMT adding jewel handling
         // Create Perception Codelets
         Codelet jd = new JewelDetector();
@@ -181,7 +205,14 @@ public class AgentMind extends Mind
 	closestJewelDetector.addInput(innerSenseMO);
 	closestJewelDetector.addOutput(closestJewelMO);
         insertCodelet(closestJewelDetector);
-		       
+	
+        // perceiving walls
+        GridMap myMap = new GridMap(1,1,780,10);
+        Codelet wd = new WallDetector(myMap);
+        wd.addInput(visionMO);
+        wd.addOutput(knownWallsMO);
+        insertCodelet(wd);
+
 	// Create Behavior Codelets
 	Codelet goToClosestJewel = new GoToClosestJewel(creatureBasicSpeed,reachDistance);
 	goToClosestJewel.addInput(closestJewelMO);
@@ -201,10 +232,19 @@ public class AgentMind extends Mind
         Codelet forageJewel = new Forage();
         forageJewel.addInput(knownApplesMO);
 	forageJewel.addInput(knownJewelsMO);
+        forageJewel.addInput(knownWallsMO);
         forageJewel.addInput(fuelMO);
         forageJewel.addOutput(legsMO);
         insertCodelet(forageJewel);
-                
+
+        // for path navigation
+       	Codelet goToEnd = new GoToEndOfMaze(creatureBasicSpeed,reachDistance,env.myCreature,myMap);
+	goToEnd.addInput(knownWallsMO);
+	goToEnd.addInput(innerSenseMO);
+        goToEnd.addInput(fuelMO);
+	goToEnd.addOutput(legsMO);
+        insertCodelet(goToEnd);
+
         // sets a time step for running the codelets to avoid heating too much your machine
         //for (Codelet c : this.getCodeRack().getAllCodelets())
         //  c.setTimeStep(500);

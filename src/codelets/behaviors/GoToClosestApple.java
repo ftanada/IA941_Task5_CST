@@ -42,7 +42,7 @@ public class GoToClosestApple extends Codelet
   {
     this.creatureBasicSpeed = creatureBasicSpeed;
     this.reachDistance = reachDistance;
-    this.setTimeStep(1000);
+    this.setTimeStep(1500);
   }
 
   @Override

@@ -39,14 +39,15 @@ public class Forage extends Codelet
     private List<Thing> known;
     private MemoryObject legsMO;
     // FMT
-    private MemoryObject knownJewelsMO;
+    private MemoryObject knownJewelsMO = null;
+    private MemoryObject knownWallsMO = null;
 
     /**
     * Default constructor
     */
     public Forage()
     {
-        this.setTimeStep(1000);
+        this.setTimeStep(2000);
     }
 
     @Override
@@ -58,20 +59,23 @@ public class Forage extends Codelet
           known = (List<Thing>) knownApplesMO.getI();
           if (known.size() == 0) 
           {
-            JSONObject message = new JSONObject();
-  	    try 
+            known = (List<Thing>) knownWallsMO.getI();
+            if (known.size() == 0) 
             {
+              JSONObject message = new JSONObject();
+  	      try 
+              {
 		message.put("ACTION", "FORAGE");
                 System.out.println("Forage.proc: "+message.toString());
                 legsMO.updateI(message.toString());		
-	    } catch (JSONException e) 
+	      } catch (JSONException e) 
                {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	       }
-          }
-        }            
-		
+            } // end if Walls
+          }  // end if Apples
+        }            		
     }
 
     @Override

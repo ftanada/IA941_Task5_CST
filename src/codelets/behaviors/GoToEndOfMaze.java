@@ -29,12 +29,14 @@ import br.unicamp.cst.core.entities.MemoryObject;
 import java.util.List;
 import memory.CreatureInnerSense;
 import support.Coordinates;
+import support.Environment;
 import support.GridMap;
 import ws3dproxy.model.Creature;
 import ws3dproxy.model.Thing;
 
 public class GoToEndOfMaze extends Codelet 
 {
+  private MemoryObject bodyMO;
   private MemoryObject knownWallsMO;
   private MemoryObject fuelMO = null;
   private MemoryObject legsMO;
@@ -43,13 +45,15 @@ public class GoToEndOfMaze extends Codelet
   private double reachDistance;
   private Creature myCreature;
   private GridMap myMap;
+  private Environment myEnvironment;
 
-  public GoToEndOfMaze(int creatureBasicSpeed, int reachDistance, Creature c, GridMap map) 
+  public GoToEndOfMaze(int creatureBasicSpeed, int reachDistance, Environment env, GridMap map) 
   {
     this.creatureBasicSpeed = creatureBasicSpeed;
     this.reachDistance = reachDistance;
     this.setTimeStep(1000);
-    myCreature = c;
+    myCreature = env.myCreature;
+    myEnvironment = env;
     myMap = map;
   }
 
@@ -60,6 +64,7 @@ public class GoToEndOfMaze extends Codelet
     selfInfoMO = (MemoryObject)this.getInput("INNER");
     legsMO = (MemoryObject)this.getOutput("LEGS");
     fuelMO = (MemoryObject) this.getInput("FUEL");
+    bodyMO = (MemoryObject)this.getOutput("BODY");
   }
 
   @Override
@@ -81,6 +86,7 @@ public class GoToEndOfMaze extends Codelet
             List<Coordinates> coord = myMap.findPath();
             if (coord != null && !coord.isEmpty()) try
             {
+                myCreature = myEnvironment.myCreature;
                 myCreature.moveto(1.5, coord.get(0).getX(), coord.get(0).getY());
             } catch (Exception e) 
               {

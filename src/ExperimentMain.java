@@ -17,6 +17,7 @@
  *    Klaus Raizer, Andre Paraense, Ricardo Ribeiro Gudwin
  *****************************************************************************/
 
+import support.Environment;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -39,6 +39,7 @@ public class EatClosestNut extends Codelet
     private MemoryObject knownMO;
     private int reachDistance;
     private MemoryObject handsMO;
+    private MemoryObject bodyMO;
     Thing closestNut;
     CreatureInnerSense cis;
     List<Thing> known;
@@ -56,6 +57,7 @@ public class EatClosestNut extends Codelet
 	innerSenseMO = (MemoryObject)this.getInput("INNER");
 	handsMO = (MemoryObject)this.getOutput("HANDS");
         knownMO = (MemoryObject)this.getOutput("KNOWN_NUTS");
+        bodyMO = (MemoryObject)this.getOutput("BODY");
     }
 
     @Override
@@ -100,20 +102,23 @@ public class EatClosestNut extends Codelet
 	    message.put("OBJECT", nutName);
 	    message.put("ACTION", "EATIT");
             System.out.println("EatClosestNut.proc: "+message.toString());
-	    handsMO.updateI(message.toString());
+	    //handsMO.updateI(message.toString());
+            bodyMO.updateI(message.toString());
             DestroyClosestNut();
 	    } else
             {
-		handsMO.updateI("");	//nothing
+		//handsMO.updateI("");	//nothing
+                bodyMO.updateI("");
 	    }
 				
-//				System.out.println(message);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else{
-			handsMO.updateI("");	//nothing
+//	System.out.println(message);
+	} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	}
+	} else {
+		//handsMO.updateI("");	//nothing
+                bodyMO.updateI("");
 		}
         //System.out.println("Before: "+known.size()+ " "+known);
         

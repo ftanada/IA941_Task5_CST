@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import br.unicamp.cst.core.entities.Codelet;
 import br.unicamp.cst.core.entities.MemoryObject;
 import memory.CreatureInnerSense;
+import support.Environment;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -53,16 +54,19 @@ public class GetClosestJewel extends Codelet
     CreatureInnerSense cis;
     List<Thing> known;
     // FMT checking leaflets
+    private MemoryObject bodyMO = null;
     private MemoryObject leafletsMO = null;
     List<Leaflet> leaflets;
     Creature myCreature;
+    Environment myEnvironment;
     World myWorld = null;
 
-    public GetClosestJewel(int reachDistance, Creature myCreature, World w) 
+    public GetClosestJewel(int reachDistance, Environment env) 
     {
         this.reachDistance = reachDistance;
-        this.myCreature = myCreature;
-        this.myWorld = w;
+        this.myCreature = env.myCreature;
+        this.myWorld = env.w;
+        this.myEnvironment = env;
         this.setTimeStep(100);
     }
 
@@ -74,6 +78,7 @@ public class GetClosestJewel extends Codelet
        handsMO = (MemoryObject) this.getOutput("HANDS");
        knownMO = (MemoryObject) this.getOutput("KNOWN_JEWELS");
        // FMT leaflets
+       bodyMO = (MemoryObject) this.getOutput("BODY");
        leafletsMO = (MemoryObject) this.getInput("LEAFLETS");
     }
 
@@ -160,6 +165,7 @@ public class GetClosestJewel extends Codelet
                        myWorld.createBrick(2,100.0,300.0,240.00,310.0);
                        WS3DProxy proxy = new WS3DProxy();
                        myCreature = proxy.createCreature(10,50,0);
+                       myEnvironment.myCreature = myCreature;
                        myCreature.start();
                      }
                      //myCreature.stop(); 
@@ -218,7 +224,8 @@ public class GetClosestJewel extends Codelet
                             message.put("ACTION", "SACKIT");
                         }
                         System.out.println("GetClosestJewel.proc: "+message.toString());
-		        handsMO.updateI(message.toString());
+		        //handsMO.updateI(message.toString());
+                        bodyMO.updateI(message.toString());
                         DestroyClosestJewel();
                         // FMT feed another jewel into world
                         if (myWorld != null)
@@ -227,7 +234,8 @@ public class GetClosestJewel extends Codelet
                         }
 	            } else
                     {
-			handsMO.updateI("");	//nothing
+			//handsMO.updateI("");	//nothing
+                        bodyMO.updateI("");
 		    }
 				
 //		    System.out.println(message);
@@ -240,12 +248,13 @@ public class GetClosestJewel extends Codelet
                 }
 	} else
         {
-	   handsMO.updateI("");	//nothing
+	   //handsMO.updateI("");	//nothing
+           bodyMO.updateI("");
         }
         //System.out.println("Before: "+known.size()+ " "+known);
         
         //System.out.println("After: "+known.size()+ " "+known);
-	//System.out.println("EatClosestApple: "+ handsMO.getInfo());	
+	//System.out.println("EatClosestApple: "+ bodyMO.getInfo());	
 
 	}
         

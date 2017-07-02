@@ -40,21 +40,23 @@ public class GoToClosestJewel extends Codelet
     private double reachDistance;
     double fuel = 0;
     private MemoryObject fuelMO = null;
+    private MemoryObject bodyMO;
 
     public GoToClosestJewel(int creatureBasicSpeed, int reachDistance) 
     {
 	this.creatureBasicSpeed = creatureBasicSpeed;
 	this.reachDistance = reachDistance;
-        this.setTimeStep(1500);
+        this.setTimeStep(1000);
     }
 
     @Override
     public void accessMemoryObjects() 
     {
-	  closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
-	  selfInfoMO = (MemoryObject)this.getInput("INNER");
-	  legsMO = (MemoryObject)this.getOutput("LEGS");
-          fuelMO = (MemoryObject) this.getInput("FUEL");
+	closestJewelMO = (MemoryObject)this.getInput("CLOSEST_JEWEL");
+	selfInfoMO = (MemoryObject)this.getInput("INNER");
+	legsMO = (MemoryObject)this.getOutput("LEGS");
+        bodyMO = (MemoryObject)this.getOutput("BODY");
+        fuelMO = (MemoryObject) this.getInput("FUEL");
     }
 
 	@Override
@@ -117,10 +119,11 @@ public class GoToClosestJewel extends Codelet
                                 message.put("SPEED", 0.0);	
  			    }
                             System.out.println("GoToClosestJewel.proc: "+message.toString());
- 			    legsMO.updateI(message.toString());
+ 			    //legsMO.updateI(message.toString());
+                            bodyMO.updateI(message.toString());
 			} catch (JSONException e) 
                         {
-				e.printStackTrace();
+			    e.printStackTrace();
 			}	
 		}
 	}//end proc

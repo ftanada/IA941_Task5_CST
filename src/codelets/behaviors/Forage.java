@@ -39,6 +39,7 @@ public class Forage extends Codelet
     private List<Thing> known;
     private MemoryObject legsMO;
     // FMT
+    private MemoryObject bodyMO;
     private MemoryObject knownJewelsMO = null;
     private MemoryObject knownWallsMO = null;
 
@@ -59,7 +60,8 @@ public class Forage extends Codelet
           known = (List<Thing>) knownApplesMO.getI();
           if (known.size() == 0) 
           {
-            known = (List<Thing>) knownWallsMO.getI();
+            if (knownWallsMO != null)  
+              known = (List<Thing>) knownWallsMO.getI();
             if (known.size() == 0) 
             {
               JSONObject message = new JSONObject();
@@ -67,7 +69,8 @@ public class Forage extends Codelet
               {
 		message.put("ACTION", "FORAGE");
                 System.out.println("Forage.proc: "+message.toString());
-                legsMO.updateI(message.toString());		
+                //legsMO.updateI(message.toString());		
+                bodyMO.updateI(message.toString());		
 	      } catch (JSONException e) 
                {
 		// TODO Auto-generated catch block
@@ -84,7 +87,7 @@ public class Forage extends Codelet
         knownApplesMO = (MemoryObject)this.getInput("KNOWN_APPLES");
         knownJewelsMO = (MemoryObject)this.getInput("KNOWN_JEWELS");
         legsMO =(MemoryObject)this.getOutput("LEGS");
-
+        bodyMO =(MemoryObject)this.getOutput("BODY");
         // TODO Auto-generated method stub	
     }
         

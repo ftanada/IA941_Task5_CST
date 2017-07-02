@@ -39,6 +39,7 @@ public class EatClosestApple extends Codelet
     private MemoryObject knownMO;
     private int reachDistance;
     private MemoryObject handsMO;
+    private MemoryObject bodyMO;
     Thing closestApple;
     CreatureInnerSense cis;
     List<Thing> known;
@@ -52,15 +53,17 @@ public class EatClosestApple extends Codelet
     @Override
     public void accessMemoryObjects() 
     {
-		closestAppleMO=(MemoryObject)this.getInput("CLOSEST_APPLE");
-		innerSenseMO=(MemoryObject)this.getInput("INNER");
-		handsMO=(MemoryObject)this.getOutput("HANDS");
-                knownMO = (MemoryObject)this.getOutput("KNOWN_APPLES");
-	}
+	closestAppleMO = (MemoryObject)this.getInput("CLOSEST_APPLE");
+	innerSenseMO = (MemoryObject)this.getInput("INNER");
+	handsMO = (MemoryObject)this.getOutput("HANDS");
+        bodyMO = (MemoryObject)this.getOutput("BODY");
+        knownMO = (MemoryObject)this.getOutput("KNOWN_APPLES");
+    }
 
-	@Override
-	public void proc() {
-                String appleName="";
+    @Override
+    public void proc() 
+    {
+                String appleName = "";
                 closestApple = (Thing) closestAppleMO.getI();
                 cis = (CreatureInnerSense) innerSenseMO.getI();
                 known = (List<Thing>) knownMO.getI();
@@ -85,7 +88,7 @@ public class EatClosestApple extends Codelet
 			double selfX=cis.position.getX();
 			double selfY=cis.position.getY();
 
-			Point2D pApple = new Point();
+ 			Point2D pApple = new Point();
 			pApple.setLocation(appleX, appleY);
 
 			Point2D pSelf = new Point();
@@ -98,10 +101,12 @@ public class EatClosestApple extends Codelet
 					message.put("OBJECT", appleName);
 					message.put("ACTION", "EATIT");
                                         System.out.println("EatClosestJewel.proc: "+message.toString());
-					handsMO.updateI(message.toString());
+                                        //handsMO.updateI(message.toString());
+                                        bodyMO.updateI(message.toString());
                                         DestroyClosestApple();
 				}else{
-					handsMO.updateI("");	//nothing
+					//handsMO.updateI("");	//nothing
+                                        bodyMO.updateI("");
 				}
 				
 //				System.out.println(message);
@@ -109,8 +114,9 @@ public class EatClosestApple extends Codelet
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else{
-			handsMO.updateI("");	//nothing
+		} else {
+			//handsMO.updateI("");	//nothing
+                        bodyMO.updateI("");	
 		}
         //System.out.println("Before: "+known.size()+ " "+known);
         

@@ -17,6 +17,7 @@
  *    Klaus Raizer, Andre Paraense, Ricardo Ribeiro Gudwin
  *****************************************************************************/
 
+import support.Environment;
 import br.unicamp.cst.core.entities.Codelet;
 import br.unicamp.cst.core.entities.MemoryObject;
 import br.unicamp.cst.core.entities.Mind;
@@ -34,9 +35,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import memory.CreatureInnerSense;
+import support.Environment;
 import support.MindView;
 import ws3dproxy.model.Thing;
 
+import codelets.motor.BodyActionCodelet;
 import codelets.behaviors.EatClosestNut;
 import codelets.perception.NutDetector;
 import codelets.behaviors.GetClosestJewel;
@@ -73,6 +76,7 @@ public class AgentMind extends Mind
         MemoryObject knownJewelsMO;
         MemoryObject closestNutMO;
         MemoryObject knownNutsMO;
+        MemoryObject bodyMO;
         MemoryObject fuelMO;
         MemoryObject leafletMO;
         // FMT path
@@ -95,14 +99,17 @@ public class AgentMind extends Mind
         closestJewelMO = createMemoryObject("CLOSEST_JEWEL", closestJewel);
         List<Thing> knownJewels = Collections.synchronizedList(new ArrayList<Thing>());
         knownJewelsMO = createMemoryObject("KNOWN_JEWELS", knownJewels);
+        
         // FMT handling nuts as well
         Thing closestNut = null;
         closestNutMO = createMemoryObject("CLOSEST_NUT", closestNut);
         List<Thing> knownNuts = Collections.synchronizedList(new ArrayList<Thing>());
         knownNutsMO = createMemoryObject("KNOWN_NUTS", knownNuts);
+        
         // handling leaflet
         List<Leaflet> leaflets = env.myCreature.getLeaflets();
-        leafletMO = createMemoryObject("LEAFLETS",leaflets);     
+        leafletMO = createMemoryObject("LEAFLETS",leaflets);   
+        
         // handling energy
         double fuel = env.myCreature.getFuel();
         fuelMO = createMemoryObject("FUEL",fuel);
@@ -111,14 +118,17 @@ public class AgentMind extends Mind
         List<Thing> knownWalls = Collections.synchronizedList(new ArrayList<Thing>());
         knownWallsMO = createMemoryObject("KNOWN_WALLS", knownWalls);
         
+        // FMT alternative to hands + legs = body
+        bodyMO = createMemoryObject("BODY", "");
+        
         // Create and Populate MindViewer
         MindView mv = new MindView("FMT_MindView");
         mv.addMO(knownApplesMO);
         mv.addMO(visionMO);
         mv.addMO(closestAppleMO);
         mv.addMO(innerSenseMO);
-        mv.addMO(handsMO);
-        mv.addMO(legsMO);
+        //mv.addMO(handsMO);
+        //mv.addMO(legsMO);
         // FMT 2017
         mv.addMO(closestJewelMO);
         mv.addMO(knownJewelsMO);
@@ -126,6 +136,7 @@ public class AgentMind extends Mind
         mv.addMO(knownNutsMO);
         mv.addMO(leafletMO);
         mv.addMO(fuelMO);
+        mv.addMO(bodyMO);
                         
         mv.StartTimer();
         mv.setVisible(true);
@@ -142,12 +153,17 @@ public class AgentMind extends Mind
 	// Create Actuator Codelets
 	Codelet legs = new LegsActionCodelet(env.myCreature);
 	legs.addInput(legsMO);
-        insertCodelet(legs);
+        //insertCodelet(legs);
 
 	Codelet hands = new HandsActionCodelet(env.myCreature);
 	hands.addInput(handsMO);
-        insertCodelet(hands);
+        //insertCodelet(hands);
 		
+        // FMT new body
+        Codelet body = new BodyActionCodelet(env.myCreature);
+	body.addInput(bodyMO);
+        insertCodelet(body);
+	
 	// Create Perception Codelets
         Codelet ad = new AppleDetector();
         ad.addInput(visionMO);
@@ -165,13 +181,15 @@ public class AgentMind extends Mind
 	goToClosestApple.addInput(closestAppleMO);
 	goToClosestApple.addInput(innerSenseMO);
         goToClosestApple.addInput(fuelMO);
-	goToClosestApple.addOutput(legsMO);
+	//goToClosestApple.addOutput(legsMO);
+        goToClosestApple.addOutput(bodyMO);
         //insertCodelet(goToClosestApple);
 		
 	Codelet eatApple = new EatClosestApple(reachDistance);
 	eatApple.addInput(closestAppleMO);
 	eatApple.addInput(innerSenseMO);
-	eatApple.addOutput(handsMO);
+	//eatApple.addOutput(handsMO);
+        eatApple.addOutput(bodyMO);
         eatApple.addOutput(knownApplesMO);
         insertCodelet(eatApple);
                 
@@ -189,7 +207,8 @@ public class AgentMind extends Mind
 	Codelet eatNut = new EatClosestNut(reachDistance);
 	eatNut.addInput(closestNutMO);
 	eatNut.addInput(innerSenseMO);
-	eatNut.addOutput(handsMO);
+	//eatNut.addOutput(handsMO);
+        eatNut.addOutput(bodyMO);
         eatNut.addOutput(knownNutsMO);
         insertCodelet(eatNut);
                 
@@ -218,14 +237,16 @@ public class AgentMind extends Mind
 	goToClosestJewel.addInput(closestJewelMO);
 	goToClosestJewel.addInput(innerSenseMO);
         goToClosestJewel.addInput(fuelMO);
-	goToClosestJewel.addOutput(legsMO);
+	//goToClosestJewel.addOutput(legsMO);
+        goToClosestJewel.addOutput(bodyMO);
         insertCodelet(goToClosestJewel);
 		
-	Codelet getJewel = new GetClosestJewel(reachDistance, env.myCreature, env.w);
+	Codelet getJewel = new GetClosestJewel(reachDistance, env);
 	getJewel.addInput(closestJewelMO);
 	getJewel.addInput(innerSenseMO);
         getJewel.addInput(leafletMO);
-	getJewel.addOutput(handsMO);
+	//getJewel.addOutput(handsMO);
+        getJewel.addOutput(bodyMO);
         getJewel.addOutput(knownJewelsMO);
         insertCodelet(getJewel);
                 
@@ -234,15 +255,17 @@ public class AgentMind extends Mind
 	forageJewel.addInput(knownJewelsMO);
         forageJewel.addInput(knownWallsMO);
         forageJewel.addInput(fuelMO);
-        forageJewel.addOutput(legsMO);
+        //forageJewel.addOutput(legsMO);
+        forageJewel.addOutput(bodyMO);
         insertCodelet(forageJewel);
 
         // for path navigation
-       	Codelet goToEnd = new GoToEndOfMaze(creatureBasicSpeed,reachDistance,env.myCreature,myMap);
+       	Codelet goToEnd = new GoToEndOfMaze(creatureBasicSpeed,reachDistance,env,myMap);
 	goToEnd.addInput(knownWallsMO);
 	goToEnd.addInput(innerSenseMO);
         goToEnd.addInput(fuelMO);
-	goToEnd.addOutput(legsMO);
+	//goToEnd.addOutput(legsMO);
+        goToEnd.addOutput(bodyMO);
         insertCodelet(goToEnd);
 
         // sets a time step for running the codelets to avoid heating too much your machine

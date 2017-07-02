@@ -31,6 +31,7 @@ import ws3dproxy.model.Thing;
 
 public class GoToClosestApple extends Codelet 
 {
+  private MemoryObject bodyMO;
   private MemoryObject closestAppleMO;
   private MemoryObject fuelMO = null;
   private MemoryObject legsMO;
@@ -42,7 +43,7 @@ public class GoToClosestApple extends Codelet
   {
     this.creatureBasicSpeed = creatureBasicSpeed;
     this.reachDistance = reachDistance;
-    this.setTimeStep(1500);
+    this.setTimeStep(1000);
   }
 
   @Override
@@ -51,6 +52,7 @@ public class GoToClosestApple extends Codelet
     closestAppleMO = (MemoryObject)this.getInput("CLOSEST_APPLE");
     selfInfoMO = (MemoryObject)this.getInput("INNER");
     legsMO = (MemoryObject)this.getOutput("LEGS");
+    bodyMO = (MemoryObject)this.getOutput("BODY");
     fuelMO = (MemoryObject) this.getInput("FUEL");
   }
 
@@ -113,7 +115,8 @@ public class GoToClosestApple extends Codelet
                                         message.put("SPEED", 0.0);	
 				}
                                 System.out.println("GoToClosestApple.proc: "+message.toString());
-				legsMO.updateI(message.toString());
+				//legsMO.updateI(message.toString());
+                                bodyMO.updateI(message.toString());
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}	

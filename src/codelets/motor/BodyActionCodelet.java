@@ -26,6 +26,7 @@ import br.unicamp.cst.core.entities.Codelet;
 import br.unicamp.cst.core.entities.MemoryObject;
 import java.util.Random;
 import java.util.logging.Logger;
+import support.Environment;
 import ws3dproxy.model.Creature;
 
 /**
@@ -40,13 +41,15 @@ public class BodyActionCodelet extends Codelet
     private double previousTargetx = 0;
     private double previousTargety = 0;
     private String previousBodyAction="";
+    private Environment myEnvironment;
     private Creature c;
     private Random r = new Random();
     static Logger log = Logger.getLogger(BodyActionCodelet.class.getCanonicalName());
 
-    public BodyActionCodelet(Creature nc) 
+    public BodyActionCodelet(Environment env) 
     {
-        c = nc;
+        c = env.myCreature;
+        myEnvironment = env;
         this.setTimeStep(50);
     }
 	
@@ -65,6 +68,7 @@ public class BodyActionCodelet extends Codelet
 	    JSONObject jsonAction;
             try 
             {
+                c = myEnvironment.myCreature;
                 jsonAction = new JSONObject(command);
                 String action = jsonAction.getString("ACTION");
                 System.out.println("BodyAction.proc: received "+action+" from "+command);

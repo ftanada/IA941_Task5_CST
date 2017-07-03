@@ -46,6 +46,7 @@ import codelets.behaviors.GetClosestJewel;
 import codelets.behaviors.GoToClosestJewel;
 import codelets.behaviors.GoToEndOfMaze;
 import codelets.perception.ClosestJewelDetector;
+import codelets.perception.ClosestNutDetector;
 import codelets.perception.JewelDetector;
 import codelets.perception.WallDetector;
 import support.GridMap;
@@ -160,7 +161,7 @@ public class AgentMind extends Mind
         //insertCodelet(hands);
 		
         // FMT new body
-        Codelet body = new BodyActionCodelet(env.myCreature);
+        Codelet body = new BodyActionCodelet(env);
 	body.addInput(bodyMO);
         insertCodelet(body);
 	
@@ -202,6 +203,12 @@ public class AgentMind extends Mind
         nd.addInput(visionMO);
         nd.addOutput(knownNutsMO);
         insertCodelet(nd);
+
+	Codelet closestNutDetector = new ClosestNutDetector();
+	closestNutDetector.addInput(knownNutsMO);
+	closestNutDetector.addInput(innerSenseMO);
+	closestNutDetector.addOutput(closestNutMO);
+        insertCodelet(closestNutDetector);
 
         // FMT eating nuts
 	Codelet eatNut = new EatClosestNut(reachDistance);

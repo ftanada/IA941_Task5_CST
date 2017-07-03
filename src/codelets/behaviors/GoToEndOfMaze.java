@@ -78,6 +78,10 @@ public class GoToEndOfMaze extends Codelet
         CreatureInnerSense cis = (CreatureInnerSense) selfInfoMO.getI();
         if ((walls == null) || (walls.isEmpty()))
           return;
+        int i = walls.size();
+        if (i <= 1)
+          return;
+        System.out.println("GoToEndOfMaze.proc: wall not empty "+i);
 	if (myMap != null)
 	{
             double selfX = cis.position.getX();

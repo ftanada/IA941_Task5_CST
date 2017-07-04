@@ -32,6 +32,7 @@ import br.unicamp.cst.core.entities.MemoryObject;
 import memory.CreatureInnerSense;
 import support.Environment;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +61,9 @@ public class GetClosestJewel extends Codelet
     Creature myCreature;
     Environment myEnvironment;
     World myWorld = null;
+    boolean notReset = true;
+    Random rdX = null;
+    Random rdY = null;
 
     public GetClosestJewel(int reachDistance, Environment env) 
     {
@@ -68,6 +72,8 @@ public class GetClosestJewel extends Codelet
         this.myWorld = env.w;
         this.myEnvironment = env;
         this.setTimeStep(100);
+        rdX = new Random();
+        rdY = new Random();
     }
 
     @Override
@@ -155,8 +161,9 @@ public class GetClosestJewel extends Codelet
                {    
                  try 
                  {
-                     if (myWorld != null)
+                     if (myWorld != null && notReset)
                      {
+                       notReset = false;
                        myWorld.reset();
                        myWorld.createBrick(2,10.0,580.0,100.00,590.0);
                        myWorld.createBrick(2,230.0,6.0,240.00,400.0);
@@ -230,7 +237,12 @@ public class GetClosestJewel extends Codelet
                         // FMT feed another jewel into world
                         if (myWorld != null)
                         {
-                            myWorld.createJewel(1, 200, 200);
+                            double cX = rdX.nextDouble() * 700;
+                            double cY = rdY.nextDouble() * 500;
+                            //myWorld.createJewel(1, cX, cY);
+                            cX = rdX.nextDouble() * 700;
+                            cY = rdY.nextDouble() * 500;
+                            //myWorld.createJewel(2, cX, cY);
                         }
 	            } else
                     {
@@ -243,9 +255,9 @@ public class GetClosestJewel extends Codelet
                 {
 		  // TODO Auto-generated catch block
 		  e.printStackTrace();
-		} catch (CommandExecException ex) {
-                    Logger.getLogger(GetClosestJewel.class.getName()).log(Level.SEVERE, null, ex);
-                }
+		} //catch (CommandExecException ex) {
+                    //Logger.getLogger(GetClosestJewel.class.getName()).log(Level.SEVERE, null, ex);
+                //}
 	} else
         {
 	   //handsMO.updateI("");	//nothing

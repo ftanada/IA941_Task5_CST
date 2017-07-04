@@ -26,6 +26,7 @@ import memory.CreatureInnerSense;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import ws3dproxy.model.Thing;
+import ws3dproxy.util.Constants;
 
 /**
  * @author klaus
@@ -66,22 +67,24 @@ public class ClosestNutDetector extends Codelet
                 for (Thing t : myknown) 
                 {
 		    String objectName = t.getName();
-		    if (objectName.contains("NPFood") && !objectName.contains("PFood")){ //Then, it is an apple
-                    if (closest_nut == null)
-                    {    
+                    int objectCategory = t.getCategory();
+		    if (objectCategory == Constants.categoryNPFOOD)
+                    { //Then, it is an apple
+                      if (closest_nut == null)
+                      {    
                         closest_nut = t;
-		    }
-                    else 
-                    {
+		      }
+                      else 
+                      {
 	                double Dnew = calculateDistance(t.getX1(), t.getY1(), cis.position.getX(), cis.position.getY());
                         double Dclosest= calculateDistance(closest_nut.getX1(), closest_nut.getY1(), cis.position.getX(), cis.position.getY());
 			if (Dnew<Dclosest)
                         {
                             closest_nut = t;
 			}
-                    }
-		}
-	    }
+                      }
+		    }
+	        }
                         
             if (closest_nut != null)
             {    

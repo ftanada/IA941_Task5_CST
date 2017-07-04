@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import ws3dproxy.model.Thing;
+import ws3dproxy.util.Constants;
 
 /**
  * Detect apples in the vision field.
@@ -71,7 +72,8 @@ public class AppleDetector extends Codelet
                             found = true;
                             break;
                           }
-                       if (found == false && t.getName().contains("PFood") && !t.getName().contains("NPFood")) known.add(t);
+                       if ((found == false) && (t.getCategory() == Constants.categoryPFOOD)) 
+                         known.add(t);
                     }
                
                  }

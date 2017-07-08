@@ -164,21 +164,22 @@ public class GetClosestJewel extends Codelet
                      if (myWorld != null && notReset)
                      {
                        notReset = false;
-                       myWorld.reset();
+                       //myWorld.reset();
                        myWorld.createBrick(2,10.0,580.0,100.00,590.0);
                        myWorld.createBrick(2,230.0,6.0,240.00,400.0);
                        myWorld.createBrick(2,450.0,380.0,460.00,594.00);
                        myWorld.createBrick(2,630.0,6.0,640.00,370.0);            
                        myWorld.createBrick(2,100.0,300.0,240.00,310.0);
-                       WS3DProxy proxy = new WS3DProxy();
-                       myCreature = proxy.createCreature(10,50,0);
-                       myEnvironment.myCreature = myCreature;
-                       myCreature.start();
+                       //WS3DProxy proxy = new WS3DProxy();
+                       //myCreature = proxy.createCreature(10,50,0);
+                       //myEnvironment.myCreature = myCreature;
+                       //myCreature.start();
                      }
                      //myCreature.stop(); 
                  }
                  catch (Exception e) { e.printStackTrace(); }
                }
+               DestroyClosestJewel();
                return;
             }
             

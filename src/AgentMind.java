@@ -242,6 +242,7 @@ public class AgentMind extends Mind
 	// Create Behavior Codelets
 	Codelet goToClosestJewel = new GoToClosestJewel(creatureBasicSpeed,reachDistance);
 	goToClosestJewel.addInput(closestJewelMO);
+        goToClosestJewel.addInput(knownWallsMO);
 	goToClosestJewel.addInput(innerSenseMO);
         goToClosestJewel.addInput(fuelMO);
 	//goToClosestJewel.addOutput(legsMO);

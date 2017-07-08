@@ -86,6 +86,20 @@ public class GoToEndOfMaze extends Codelet
 	{
             double selfX = cis.position.getX();
 	    double selfY = cis.position.getY();
+            // FMT checking if already at final destination
+            if (selfX > 580 && selfY < 20)
+            {
+              // reached end
+                System.out.println("GoToEndOfMaze.proc: reached target");
+                if (myEnvironment != null)
+                try {
+                  myEnvironment.w.reset();
+                } catch (Exception e) 
+                  {
+                      e.printStackTrace();
+                  }
+                return;
+            }
             myMap.markStartPosition(selfX,selfY);
             List<Coordinates> coord = myMap.findPath();
             if (coord != null && !coord.isEmpty()) try

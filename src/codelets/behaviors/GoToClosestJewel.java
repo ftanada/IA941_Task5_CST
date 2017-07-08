@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import br.unicamp.cst.core.entities.Codelet;
 import br.unicamp.cst.core.entities.MemoryObject;
+import java.util.List;
 import memory.CreatureInnerSense;
 import ws3dproxy.model.Thing;
 
@@ -41,6 +42,7 @@ public class GoToClosestJewel extends Codelet
     double fuel = 0;
     private MemoryObject fuelMO = null;
     private MemoryObject bodyMO;
+    private MemoryObject wallsMO;
 
     public GoToClosestJewel(int creatureBasicSpeed, int reachDistance) 
     {
@@ -57,27 +59,37 @@ public class GoToClosestJewel extends Codelet
 	legsMO = (MemoryObject)this.getOutput("LEGS");
         bodyMO = (MemoryObject)this.getOutput("BODY");
         fuelMO = (MemoryObject) this.getInput("FUEL");
+        wallsMO = (MemoryObject) this.getInput("KNOWN_WALSS");
     }
 
-	@Override
-	public void proc() 
+    @Override
+    public void proc() 
+    {
+        // FMT checking energy level
+        if (fuelMO != null)
         {
-            // FMT checking energy level
-            if (fuelMO != null)
+            fuel = (double) fuelMO.getI();
+            if (fuel < 40)
             {
-              fuel = (double) fuelMO.getI();
-              if (fuel < 40)
-              {
-                 System.out.println("GoToClosestJewel.proc: abort with low energy "+fuel);
-                 return;
-              }
+                System.out.println("GoToClosestJewel.proc: abort with low energy "+fuel);
+                return;
             }
-		// Find distance between creature and closest apple
-		//If far, go towards it
-		//If close, stops
+        }
+        
+        // FMT check if not in path scenario
+        if (wallsMO != null)
+        {
+          List<Thing> known = (List<Thing>) wallsMO.getI();  
+          if (known.size() > 0) 
+            return;
+        }
+        
+	// Find distance between creature and closest apple
+	//If far, go towards it
+	//If close, stops
 
-                Thing closestJewel = (Thing) closestJewelMO.getI();
-                CreatureInnerSense cis = (CreatureInnerSense) selfInfoMO.getI();
+        Thing closestJewel = (Thing) closestJewelMO.getI();
+        CreatureInnerSense cis = (CreatureInnerSense) selfInfoMO.getI();
 
 		if (closestJewel != null)
 		{
